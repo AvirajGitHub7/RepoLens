@@ -86,7 +86,7 @@ export default function DashboardPage() {
       >
         <div>
           <h1 className="text-2xl font-bold text-white">
-            {greeting}, {firstName} 👋
+            {greeting}, {firstName} 
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
             {profileLoading ? (

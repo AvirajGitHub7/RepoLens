@@ -1,6 +1,6 @@
 # RepoLens
 
-![RepoLens Hero Placeholder](./public/hero-placeholder.png) <!-- Update this path once a real hero image is added -->
+![RepoLens Hero Placeholder](./public/landing_page.png)
 
 RepoLens is an intelligent, AI-powered codebase analysis platform that provides deep insights into any GitHub repository. By generating architectural summaries, extracting key technical narratives, and synthesizing HR and interview questions based on the actual code, RepoLens bridges the gap between raw source code and human-readable project documentation.
 
@@ -16,11 +16,11 @@ RepoLens is an intelligent, AI-powered codebase analysis platform that provides 
 ## Screenshots
 
 <div align="center">
-  <img src="./public/screenshot-dashboard.png" alt="Dashboard View Placeholder" width="45%" />
-  <img src="./public/screenshot-analysis.png" alt="Analysis View Placeholder" width="45%" />
+  <img src="./public/dashboard.png" alt="Dashboard View Placeholder" width="45%" />
+  <img src="./public/analysis.png" alt="Analysis View Placeholder" width="45%" />
 </div>
 
-> **Note:** Replace the placeholder image paths in `./public` with real screenshots of your application before sharing the repository.
+
 
 ## Architecture
 

@@ -195,7 +195,7 @@ export default function AnalyzePage() {
                       </SelectTrigger>
                       <SelectContent className="bg-zinc-900 border-white/10 max-h-64">
                         {repos.map(r => (
-                          <SelectItem key={r.full_name} value={r.html_url || `https://github.com/${r.full_name}`}>
+                          <SelectItem key={r.full_name} value={`https://github.com/${r.full_name}`}>
                             {r.full_name} {r.private && "🔒"}
                           </SelectItem>
                         ))}

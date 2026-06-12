@@ -217,23 +217,24 @@ export default function SettingsPage() {
                   <h2 className="text-lg font-semibold text-zinc-200">API Keys (BYOK)</h2>
                   <p className="text-sm text-zinc-500 mt-1">Bring Your Own Key to bypass analysis limits (Coming Soon).</p>
                 </div>
-                <div className="space-y-4">
+                <form className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-zinc-300">Google Gemini API Key</label>
                     <input
                       type="password"
+                      autoComplete="new-password"
                       placeholder="AIzaSyB..."
                       className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-2.5 text-zinc-200 focus:outline-none transition-colors cursor-not-allowed opacity-50"
                       disabled
                     />
                     <p className="text-xs text-zinc-500 mt-1.5">This feature is not yet active. Your personal keys will be securely encrypted.</p>
                   </div>
-                </div>
-                <div className="pt-4 flex items-center gap-4 border-t border-white/[0.06]">
-                  <Button disabled className="bg-white/[0.04] text-zinc-400 border border-white/[0.08]">
-                    Save API Key
-                  </Button>
-                </div>
+                  <div className="pt-4 flex items-center gap-4 border-t border-white/[0.06]">
+                    <Button disabled type="submit" className="bg-white/[0.04] text-zinc-400 border border-white/[0.08]">
+                      Save API Key
+                    </Button>
+                  </div>
+                </form>
               </motion.div>
             )}
           </AnimatePresence>

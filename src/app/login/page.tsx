@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Zap, GitBranch, Shield, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { AppLogo } from "@/components/shared/AppLogo";
 
 export default function LoginPage() {
   const { user, loading: authLoading, loginWithGoogle, loginWithGithub } = useAuth();
@@ -79,11 +80,8 @@ export default function LoginPage() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 glow-brand">
-              <Zap className="w-4.5 h-4.5 text-white" />
-            </div>
-            <span className="font-bold text-lg text-white tracking-tight">RepoLens</span>
+          <div className="inline-flex items-center justify-center">
+            <AppLogo size="xl" showText={true} />
           </div>
           <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
             Convert any GitHub repository into technical interview confidence

@@ -15,6 +15,7 @@ import {
   CreditCard,
   HelpCircle,
 } from "lucide-react";
+import { AppLogo } from "@/components/shared/AppLogo";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
@@ -83,9 +84,7 @@ export function Sidebar({ collapsed, onCollapse, mobile = false }: SidebarProps)
       {/* ── Logo ── */}
       <div className="flex items-center h-14 px-4 border-b border-white/[0.06] shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shrink-0 glow-brand-sm">
-            <Zap className="w-3.5 h-3.5 text-white" />
-          </div>
+          <AppLogo size="sm" showText={false} />
           <AnimatePresence>
             {(!collapsed || mobile) && (
               <motion.span
@@ -95,7 +94,7 @@ export function Sidebar({ collapsed, onCollapse, mobile = false }: SidebarProps)
                 transition={{ duration: 0.15 }}
                 className="font-semibold text-sm text-white tracking-tight whitespace-nowrap"
               >
-                RepoLens
+                Repo<span className="text-[#FF7A00]">Lens</span>
               </motion.span>
             )}
           </AnimatePresence>

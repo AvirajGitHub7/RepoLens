@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AppLogo } from "@/components/shared/AppLogo";
 
 // ─── Feature data ──────────────────────────────────────────────────────────────
 
@@ -183,11 +184,8 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav className="fixed top-0 inset-x-0 z-50 h-14 flex items-center px-6 border-b border-white/[0.06] bg-[oklch(0.08_0_0)]/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 glow-brand-sm">
-              <Zap className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="font-semibold text-sm text-white tracking-tight">RepoLens</span>
+          <Link href="/">
+            <AppLogo size="md" />
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
@@ -582,12 +580,7 @@ export default function LandingPage() {
       {/* ── Footer ── */}
       <footer className="py-10 px-6 border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-violet-600">
-              <Zap className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-sm font-semibold text-zinc-400">RepoLens</span>
-          </div>
+          <AppLogo size="sm" showText={true} />
           <p className="text-xs text-zinc-600">© 2025 RepoLens. Built for engineers, by engineers.</p>
           <div className="flex items-center gap-4 text-xs text-zinc-600">
             <a href="#" className="hover:text-zinc-400 transition-colors">Privacy</a>

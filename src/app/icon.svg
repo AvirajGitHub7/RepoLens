@@ -1,0 +1,28 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FF7A00" />
+      <stop offset="100%" stopColor="#FF4500" />
+    </linearGradient>
+    <linearGradient id="orangeLightGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#FFB347" />
+      <stop offset="100%" stopColor="#FF8C00" />
+    </linearGradient>
+  </defs>
+
+  <!-- Main interconnected shapes -->
+  <path
+    d="M30 50 C30 25, 45 15, 65 25 C85 35, 85 65, 65 75 C45 85, 30 75, 30 50 Z"
+    fill="url(#orangeGradient)"
+  />
+  <path
+    d="M70 50 C70 75, 55 85, 35 75 C15 65, 15 35, 35 25 C55 15, 70 25, 70 50 Z"
+    fill="url(#orangeLightGradient)"
+    opacity="0.9"
+    style="mix-blend-mode: overlay;"
+  />
+  
+  <!-- Inner dot/lens -->
+  <circle cx="50" cy="50" r="12" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="50" cy="50" r="6" fill="url(#orangeGradient)" />
+</svg>

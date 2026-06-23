@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { useAnalyses } from "@/lib/hooks/useAnalyses";
 import { Sidebar } from "./Sidebar";
+import { AppLogo } from "@/components/shared/AppLogo";
 
 // ─── Breadcrumb map ────────────────────────────────────────────────────────────
 
@@ -105,7 +106,7 @@ export function Topbar() {
           <Breadcrumbs />
         </div>
         <div className="flex md:hidden flex-1 min-w-0">
-          <span className="text-sm font-medium text-zinc-300">RepoLens</span>
+          <AppLogo size="sm" />
         </div>
 
         {/* Right actions */}

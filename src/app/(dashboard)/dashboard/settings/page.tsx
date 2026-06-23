@@ -20,12 +20,18 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [geminiApiKey, setGeminiApiKey] = useState("");
+  const [isSavingKey, setIsSavingKey] = useState(false);
+  const [keySaveSuccess, setKeySaveSuccess] = useState(false);
 
   useEffect(() => {
     if (profile?.displayName) {
       setDisplayName(profile.displayName);
     } else if (user?.displayName) {
       setDisplayName(user.displayName);
+    }
+    if (profile?.geminiApiKey) {
+      setGeminiApiKey(profile.geminiApiKey);
     }
   }, [profile, user]);
 
@@ -41,6 +47,22 @@ export default function SettingsPage() {
       console.error("Failed to update profile", error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSaveApiKey = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setIsSavingKey(true);
+    setKeySaveSuccess(false);
+    try {
+      await updateUserProfile(user.uid, { geminiApiKey: geminiApiKey.trim() || null });
+      setKeySaveSuccess(true);
+      setTimeout(() => setKeySaveSuccess(false), 3000);
+    } catch (error) {
+      console.error("Failed to save API key", error);
+    } finally {
+      setIsSavingKey(false);
     }
   };
 
@@ -215,24 +237,39 @@ export default function SettingsPage() {
               >
                 <div>
                   <h2 className="text-lg font-semibold text-zinc-200">API Keys (BYOK)</h2>
-                  <p className="text-sm text-zinc-500 mt-1">Bring Your Own Key to bypass analysis limits (Coming Soon).</p>
+                  <p className="text-sm text-zinc-500 mt-1">Bring Your Own Key to bypass analysis limits and use your own credits.</p>
                 </div>
-                <form className="space-y-4">
+                <form onSubmit={handleSaveApiKey} className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-zinc-300">Google Gemini API Key</label>
                     <input
                       type="password"
                       autoComplete="new-password"
                       placeholder="AIzaSyB..."
-                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-2.5 text-zinc-200 focus:outline-none transition-colors cursor-not-allowed opacity-50"
-                      disabled
+                      value={geminiApiKey}
+                      onChange={(e) => setGeminiApiKey(e.target.value)}
+                      disabled={profileLoading}
+                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-2.5 text-zinc-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-colors"
                     />
-                    <p className="text-xs text-zinc-500 mt-1.5">This feature is not yet active. Your personal keys will be securely encrypted.</p>
+                    <p className="text-xs text-zinc-500 mt-1.5">Your personal key will be securely saved and used for your analyses.</p>
                   </div>
                   <div className="pt-4 flex items-center gap-4 border-t border-white/[0.06]">
-                    <Button disabled type="submit" className="bg-white/[0.04] text-zinc-400 border border-white/[0.08]">
-                      Save API Key
+                    <Button 
+                      type="submit" 
+                      disabled={isSavingKey || profileLoading}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white border-0 min-w-32 glow-brand-sm"
+                    >
+                      {isSavingKey ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save API Key"}
                     </Button>
+                    {keySaveSuccess && (
+                      <motion.span 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-sm text-emerald-400 flex items-center gap-1.5"
+                      >
+                        <Check className="w-4 h-4" /> API Key saved
+                      </motion.span>
+                    )}
                   </div>
                 </form>
               </motion.div>

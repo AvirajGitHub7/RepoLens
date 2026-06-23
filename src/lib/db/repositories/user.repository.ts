@@ -14,6 +14,7 @@ import {
   updateDoc,
   serverTimestamp,
   UpdateData,
+  increment,
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
 import { db } from "@/lib/firebase";
@@ -57,6 +58,17 @@ export async function updateUserProfile(
   await updateDoc(ref, {
     ...(partial as UpdateData<UserProfile>),
     lastLogin: serverTimestamp(),
+  });
+}
+
+/**
+ * Increment the user's used analysis quota by amount (default 1).
+ * Can pass -1 to refund quota on failure.
+ */
+export async function incrementAnalysisQuota(uid: string, amount: number = 1): Promise<void> {
+  const ref = doc(db, COLLECTION, uid);
+  await updateDoc(ref, {
+    "analysisQuota.used": increment(amount),
   });
 }
 

@@ -34,9 +34,25 @@ export async function fetchRepoData(
   }
 
   // 1. Fetch Repo Metadata
-  const repoRes = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}`, { headers });
+  let repoRes = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}`, { headers });
+  
+  if (repoRes.status === 401 && authToken) {
+    // Token might be invalid/expired. Retry without it for public repos.
+    const fallbackHeaders = { ...headers };
+    delete fallbackHeaders.Authorization;
+    repoRes = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}`, { headers: fallbackHeaders });
+  }
+
   if (!repoRes.ok) {
-    throw new Error(`Failed to fetch repository metadata: ${repoRes.statusText}`);
+    if (repoRes.status === 404) {
+      throw new Error(`Repository not found (404). If this is a private repository, ensure you are signed in with GitHub and the token has not expired.`);
+    }
+    
+    let errorMsg = repoRes.statusText;
+    if (!errorMsg) {
+      errorMsg = await repoRes.text().catch(() => "Unknown error");
+    }
+    throw new Error(`Failed to fetch repository metadata (Status: ${repoRes.status}): ${errorMsg}`);
   }
   const repoData: GithubRepoResponse = await repoRes.json();
   const repoMeta = parseRepoMeta(repoUrl, repoData);

@@ -115,7 +115,8 @@ export async function generateAIAnalysis(repoMeta: RepoMeta, techStack: TechStac
     Return ONLY valid JSON matching the requested schema. Do not use markdown wrappers around the JSON.
     
     IMPORTANT INSTRUCTION for "architecture" field:
-    The architecture must be a clean ASCII tree structure representing the system's architecture, including directories and main components. It MUST strictly follow this tree-like format example:
+    1. The architecture MUST begin with a clean, vertical ASCII tree structure representing the system's architecture (NOT a horizontal folder list). It must include directories, main components, backend flow, database interactions, authentication flow, and any background jobs/services if present.
+    Example:
     \`\`\`text
     src
     ├── config/
@@ -130,7 +131,7 @@ export async function generateAIAnalysis(repoMeta: RepoMeta, techStack: TechStac
     │   └── merch/                     # Mongoose Module
     └── server.ts                      # App entry point
     \`\`\`
-    Wrap the tree in a standard markdown code block (\`\`\`text ... \`\`\`).
+    2. AFTER the tree structure, provide concise explanations of the architecture, including backend flow, database interactions, authentication flow, and any background jobs/services. Format these explanations as standard markdown paragraphs and lists.
     
     Context:
     ${repoContent}

@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
-import { getAnalysesByUser, getAnalysis } from "@/lib/db/repositories/analysis.repository";
+import { collection, doc, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { analysisConverter } from "@/lib/db/models/analysis.model";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { Analysis } from "@/lib/types";
+
+const COLLECTION = "analyses";
 
 export function useAnalyses() {
   const { user } = useAuthContext();
@@ -18,33 +22,27 @@ export function useAnalyses() {
       return;
     }
 
-    let isMounted = true;
+    setLoading(true);
+    
+    const col = collection(db, COLLECTION).withConverter(analysisConverter);
+    const q = query(col, where("userId", "==", user.uid));
 
-    async function fetchAnalyses() {
-      if (!user) return;
-      try {
-        setLoading(true);
-        const data = await getAnalysesByUser(user.uid);
-        if (isMounted) {
-          setAnalyses(data);
-          setError(null);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err : new Error("Failed to fetch analyses"));
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const results = snap.docs.map((d) => d.data());
+        results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setAnalyses(results);
+        setError(null);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err instanceof Error ? err : new Error("Failed to fetch analyses"));
+        setLoading(false);
       }
-    }
+    );
 
-    fetchAnalyses();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => unsubscribe();
   }, [user]);
 
   return { analyses, loading, error };
@@ -65,33 +63,24 @@ export function useAnalysis(id: string) {
       return;
     }
 
-    let isMounted = true;
+    setLoading(true);
 
-    async function fetchAnalysis() {
-      if (!id) return;
-      try {
-        setLoading(true);
-        const data = await getAnalysis(id);
-        if (isMounted) {
-          setAnalysis(data);
-          setError(null);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err : new Error("Failed to fetch analysis"));
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+    const ref = doc(db, COLLECTION, id).withConverter(analysisConverter);
+    
+    const unsubscribe = onSnapshot(
+      ref,
+      (snap) => {
+        setAnalysis(snap.exists() ? snap.data() : null);
+        setError(null);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err instanceof Error ? err : new Error("Failed to fetch analysis"));
+        setLoading(false);
       }
-    }
+    );
 
-    fetchAnalysis();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => unsubscribe();
   }, [user, id]);
 
   return { analysis, loading, error };

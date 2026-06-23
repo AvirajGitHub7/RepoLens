@@ -1,4 +1,5 @@
-import { updateAnalysis } from "@/lib/db/repositories/analysis.repository";
+import { updateAnalysis, getAnalysis } from "@/lib/db/repositories/analysis.repository";
+import { incrementAnalysisQuota } from "@/lib/db/repositories/user.repository";
 import { fetchRepoData } from "./github/github.service";
 import { generateAIAnalysis } from "@/lib/actions/ai.actions";
 
@@ -40,10 +41,20 @@ export async function processGithubAnalysis(analysisId: string, repoUrl: string,
     });
 
   } catch (error) {
-    console.error("Pipeline Orchestration Error:", error);
+    console.warn("Pipeline Orchestration Error (Handled):", error instanceof Error ? error.message : error);
     await updateAnalysis(analysisId, {
       status: "failed",
       errorMessage: error instanceof Error ? error.message : "An unexpected error occurred during analysis.",
     });
+    
+    // Refund the quota if orchestration fails
+    try {
+      const analysis = await getAnalysis(analysisId);
+      if (analysis) {
+        await incrementAnalysisQuota(analysis.userId, -1);
+      }
+    } catch (refundError) {
+      console.error("Failed to refund analysis quota:", refundError);
+    }
   }
 }

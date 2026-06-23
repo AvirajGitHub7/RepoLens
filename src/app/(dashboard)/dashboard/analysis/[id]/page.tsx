@@ -90,9 +90,9 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full print:block print:h-auto">
       {/* ── Scrollspy sidebar ── */}
-      <aside className="no-print hidden lg:flex flex-col w-52 shrink-0 border-r border-white/[0.06] p-3 sticky top-0 h-full overflow-y-auto">
+      <aside className="no-print hidden lg:flex flex-col w-52 shrink-0 border-r border-white/[0.06] p-3 sticky top-0 h-full overflow-y-auto print:hidden">
         <p className="text-[10px] font-semibold text-zinc-600 uppercase tracking-wider px-2 mb-2 mt-1">
           Sections
         </p>
@@ -125,7 +125,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
       </aside>
 
       {/* ── Main scrollable content ── */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto print:overflow-visible print:block">
         <div className="max-w-3xl mx-auto px-6 py-8 space-y-16">
 
           {loading ? (
@@ -275,8 +275,18 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
               className="mt-4 p-5 rounded-xl border border-white/[0.06] bg-white/[0.02]"
             >
               {analysis.status === "completed" ? (
-                <div className="prose prose-sm prose-invert max-w-none text-zinc-300 leading-relaxed whitespace-pre-wrap">
-                  <ReactMarkdown>{analysis.architecture || "No architecture breakdown generated."}</ReactMarkdown>
+                <div className="prose prose-sm prose-invert max-w-none text-zinc-300 leading-relaxed">
+                  <ReactMarkdown>
+                    {(() => {
+                      const arch = analysis.architecture;
+                      if (!arch) return "No architecture breakdown generated.";
+                      if (arch.includes("```")) return arch;
+                      if (arch.includes("├──") || arch.includes("└──")) {
+                        return `\`\`\`text\n${arch}\n\`\`\``;
+                      }
+                      return arch;
+                    })()}
+                  </ReactMarkdown>
                 </div>
               ) : (
                 <p className="text-sm text-zinc-500 italic text-center">Data is being generated...</p>

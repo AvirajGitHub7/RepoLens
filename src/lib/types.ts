@@ -155,6 +155,7 @@ export interface UserProfile {
   displayName: string;
   photoURL: string | null;
   githubUsername: string | null;
+  geminiApiKey?: string | null;
   plan: UserPlan;
   analysisQuota: {
     used: number;

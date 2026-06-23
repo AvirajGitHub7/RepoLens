@@ -25,6 +25,7 @@ export interface UserProfileDocument {
   displayName: string | null;
   photoURL: string | null;
   githubUsername: string | null;
+  geminiApiKey?: string | null;
   plan: UserProfile["plan"];
   analysisQuota: { used: number; limit: number };
   providerId: string;
@@ -42,6 +43,7 @@ export const userConverter: FirestoreDataConverter<UserProfile> = {
       displayName: profile.displayName,
       photoURL: profile.photoURL ?? null,
       githubUsername: profile.githubUsername ?? null,
+      geminiApiKey: profile.geminiApiKey ?? null,
       plan: profile.plan,
       analysisQuota: profile.analysisQuota,
       providerId: profile.providerId ?? "unknown",
@@ -63,6 +65,7 @@ export const userConverter: FirestoreDataConverter<UserProfile> = {
       displayName: d.displayName ?? "",
       photoURL: d.photoURL,
       githubUsername: d.githubUsername,
+      geminiApiKey: d.geminiApiKey,
       plan: d.plan ?? "free",
       analysisQuota: d.analysisQuota ?? { used: 0, limit: 5 },
       providerId: d.providerId,

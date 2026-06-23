@@ -92,7 +92,9 @@ export default function DashboardPage() {
             {profileLoading ? (
               <span className="animate-pulse bg-white/10 rounded h-4 w-48 inline-block" />
             ) : profile ? (
-              `You have ${profile.analysisQuota.limit - profile.analysisQuota.used} analyses remaining this month.`
+              profile.geminiApiKey ? 
+                `Analyses Used: ${profile.analysisQuota.used} (Unlimited via API Key)` :
+                `Analyses Used: ${profile.analysisQuota.used} / ${profile.analysisQuota.limit} this month.`
             ) : (
               "Welcome to RepoLens!"
             )}

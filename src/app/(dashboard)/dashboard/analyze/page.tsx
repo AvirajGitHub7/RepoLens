@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   GitBranch,
@@ -30,6 +31,7 @@ import { useAnalyses } from "@/lib/hooks/useAnalyses";
 import { AnalysisCard } from "@/components/shared/AnalysisCard";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { createAnalysis } from "@/lib/db/repositories/analysis.repository";
+import { incrementAnalysisQuota } from "@/lib/db/repositories/user.repository";
 import { Analysis } from "@/lib/types";
 import { toast } from "sonner";
 import { processGithubAnalysis } from "@/lib/services/analysis.orchestrator";
@@ -46,6 +48,7 @@ const analysisOptions = [
 ];
 
 export default function AnalyzePage() {
+  const router = useRouter();
   const { user } = useAuthContext();
   const { analyses, loading: analysesLoading } = useAnalyses();
   const [url, setUrl] = useState("");
@@ -130,15 +133,13 @@ export default function AnalyzePage() {
       };
 
       await createAnalysis(newAnalysis);
+      await incrementAnalysisQuota(user.uid);
       processGithubAnalysis(newAnalysis.id, url, githubToken);
 
       toast.success("Analysis started successfully!");
       
-      // Reset form
-      setUrl("");
-      setBranch("main");
-      setIsPrivate(false);
-      setOptions(Object.fromEntries(analysisOptions.map((o) => [o.id, o.default])));
+      // Redirect immediately so user sees loading state
+      router.push(`/dashboard/analysis/${analysisId}`);
     } catch (error) {
       console.error("Error creating analysis:", error);
       toast.error("Failed to start analysis. Please try again.");
@@ -258,7 +259,11 @@ export default function AnalyzePage() {
                     type="button"
                     variant="outline"
                     onClick={() => setIsPrivate(!isPrivate)}
-                    className="w-full h-10 border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white text-sm justify-start gap-2"
+                    className={`w-full h-10 border-white/[0.08] bg-white/[0.04] text-sm justify-start gap-2 transition-colors ${
+                      isPrivate && !githubToken 
+                        ? "text-amber-400 border-amber-500/30 hover:bg-amber-500/10" 
+                        : "text-zinc-300 hover:text-white"
+                    }`}
                   >
                     {isPrivate ? (
                       <><Lock className="w-3.5 h-3.5 text-amber-400" /> Private</>
@@ -268,6 +273,17 @@ export default function AnalyzePage() {
                   </Button>
                 </div>
               </div>
+
+              {isPrivate && !githubToken && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs text-amber-200/90 leading-relaxed"
+                >
+                  <strong className="text-amber-400 font-semibold block mb-1">GitHub Authentication Required</strong>
+                  You are currently logged in without a GitHub session token. To analyze private repositories, you must log out and sign back in using the <span className="text-white font-medium">Continue with GitHub</span> option.
+                </motion.div>
+              )}
             </div>
 
             {/* Analysis options */}
@@ -321,7 +337,7 @@ export default function AnalyzePage() {
             {/* Submit */}
             <Button
               type="submit"
-              disabled={!isValidUrl || loading}
+              disabled={!isValidUrl || loading || (isPrivate && !githubToken)}
               className="w-full h-11 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white border-0 text-sm font-semibold glow-brand-sm transition-all duration-200"
             >
               {loading ? (

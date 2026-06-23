@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { getUserProfile } from "@/lib/db/repositories/user.repository";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { userConverter } from "@/lib/db/models/user.model";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { UserProfile } from "@/lib/types";
 
@@ -10,36 +12,32 @@ export function useUserProfile() {
 
   useEffect(() => {
     if (!user) {
-      setTimeout(() => {
-        setProfile(null);
-        setLoading(false);
-      }, 0);
+      setProfile(null);
+      setLoading(false);
       return;
     }
 
-    let isMounted = true;
+    setLoading(true);
 
-    async function fetchProfile() {
-      try {
-        setLoading(true);
-        const data = await getUserProfile(user!.uid);
-        if (isMounted) {
-          setProfile(data);
+    const docRef = doc(db, "users", user.uid).withConverter(userConverter);
+    
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setProfile(docSnap.data());
+        } else {
+          setProfile(null);
         }
-      } catch (err) {
-        console.error("Failed to fetch user profile", err);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching real-time user profile:", error);
+        setLoading(false);
       }
-    }
+    );
 
-    fetchProfile();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => unsubscribe();
   }, [user]);
 
   return { profile, loading };
